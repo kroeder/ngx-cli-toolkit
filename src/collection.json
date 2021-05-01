@@ -2,6 +2,7 @@
   "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
   "schematics": {
     "ng-add": {
+      "save": "devDependencies",
       "description": "Add and bootstrap ng-schematics-toolkit",
       "factory": "./ng-add/index#ngAdd"
     }
