@@ -18,7 +18,7 @@
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "strictNullChecks": true,
+    "strict": true,
     "target": "es6",
     "types": [
       "jest",
