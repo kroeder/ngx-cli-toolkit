@@ -9,7 +9,7 @@ export function buildSchematics(
     _options: SchematicsBuilderOptions,
     { logger }: BuilderContext
 ): Observable<BuilderOutput> {
-    logger.info('Yay!');
+    logger.info('Noop');
     return of({
         success: true
     });
