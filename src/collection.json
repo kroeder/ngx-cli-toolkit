@@ -5,6 +5,11 @@
       "save": "devDependencies",
       "description": "Add and bootstrap ng-schematics-toolkit",
       "factory": "./ng-add/index#ngAdd"
+    },
+    "init": {
+      "factory": "./ng-generate/init/index#initSchematicsProject",
+      "description": "Initialize schematics project",
+      "schema": "./ng-generate/init/schema.json"
     }
   }
 }
