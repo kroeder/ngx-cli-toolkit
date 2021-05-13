@@ -4,7 +4,7 @@ import { ProjectDefinition } from '@angular-devkit/core/src/workspace';
 import { LoggerApi } from '@angular-devkit/core/src/logger';
 import * as path from 'path';
 
-interface InitSchematicsProjectOptions {
+export interface InitSchematicsProjectOptions {
     project: string;
 }
 
