@@ -31,6 +31,14 @@ describe('ng-generate', () => {
         }
     };
 
+    const angularJsonExpected = {
+        ...angularJson,
+        projects: {
+            ...angularJson.projects
+
+        }
+    };
+
     it('should initialize a schematics project', async () => {
         const runner = new SchematicTestRunner('schematics', collectionPath);
         const tree = Tree.empty();

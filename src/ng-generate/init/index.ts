@@ -1,7 +1,6 @@
 import { SchematicContext, SchematicsException, Tree } from '@angular-devkit/schematics';
-import { getWorkspace } from '@schematics/angular/utility/workspace';
-import { ProjectDefinition } from '@angular-devkit/core/src/workspace';
-import { LoggerApi } from '@angular-devkit/core/src/logger';
+import { getWorkspace, updateWorkspace } from '@schematics/angular/utility/workspace';
+import { ProjectDefinition, WorkspaceDefinition } from '@angular-devkit/core/src/workspace';
 import * as path from 'path';
 
 export interface InitSchematicsProjectOptions {
@@ -9,13 +8,17 @@ export interface InitSchematicsProjectOptions {
 }
 
 export function initSchematicsProject(options: InitSchematicsProjectOptions) {
+    // @ts-ignore
     return async (host: Tree, { logger }: SchematicContext) => {
-        const project = await getProject(host, logger, options.project);
-        createSchematicsFiles(host, logger, project);
+        const workspace = await getWorkspace(host);
+        const project = await getProject(workspace, options.project);
+        const schematicsDir = path.join(project.root, 'schematics');
+        createSchematicsFiles(host, schematicsDir);
+        addBuilderToAngularJson(workspace, project);
 
         /**
-         * - Create schematics directory in project path
-         * - Create necessary json files (collection.json, migrations.json)
+         * - OK Create schematics directory in project path
+         * - OK Create necessary json files (collection.json, migrations.json)
          * - Create builder entry in angular.json
          * - Create entry in package.json
          */
@@ -24,8 +27,7 @@ export function initSchematicsProject(options: InitSchematicsProjectOptions) {
     };
 }
 
-async function getProject(host: Tree, _logger: LoggerApi, projectName: string) {
-    const workspace = await getWorkspace(host);
+async function getProject(workspace: WorkspaceDefinition, projectName: string) {
     if (workspace.projects.has(projectName)) {
         return workspace.projects.get(projectName) as ProjectDefinition;
     } else {
@@ -35,12 +37,17 @@ async function getProject(host: Tree, _logger: LoggerApi, projectName: string) {
     }
 }
 
-function createSchematicsFiles(
-    host: Tree,
-    _logger: LoggerApi,
+function createSchematicsFiles(host: Tree, targetDir: string) {
+    host.create(path.join(targetDir, 'collection.json'), '{}');
+    host.create(path.join(targetDir, 'migrations.json'), '{}');
+}
+
+function addBuilderToAngularJson(
+    workspace: WorkspaceDefinition,
     project: ProjectDefinition
 ) {
-    const schematicsDir = path.join(project.root, 'schematics');
-    host.create(path.join(schematicsDir, 'collection.json'), '{}');
-    host.create(path.join(schematicsDir, 'migrations.json'), '{}');
+    project.targets.set('build-schematics', {
+        builder: 'ng-schematics-toolkit:build-schematics'
+    });
+    updateWorkspace(workspace);
 }
