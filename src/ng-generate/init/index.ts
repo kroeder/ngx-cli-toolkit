@@ -1,4 +1,4 @@
-import { SchematicContext, SchematicsException, Tree } from '@angular-devkit/schematics';
+import { SchematicsException, Tree } from '@angular-devkit/schematics';
 import { getWorkspace, updateWorkspace } from '@schematics/angular/utility/workspace';
 import { ProjectDefinition, WorkspaceDefinition } from '@angular-devkit/core/src/workspace';
 import * as path from 'path';
@@ -9,12 +9,13 @@ export interface InitSchematicsProjectOptions {
 
 export function initSchematicsProject(options: InitSchematicsProjectOptions) {
     // @ts-ignore
-    return async (host: Tree, { logger }: SchematicContext) => {
+    return async (host: Tree) => {
         const workspace = await getWorkspace(host);
         const project = await getProject(workspace, options.project);
         const schematicsDir = path.join(project.root, 'schematics');
         createSchematicsFiles(host, schematicsDir);
-        addBuilderToAngularJson(workspace, project);
+
+        return addBuilderToAngularJson(workspace, options.project);
 
         /**
          * - OK Create schematics directory in project path
@@ -22,8 +23,6 @@ export function initSchematicsProject(options: InitSchematicsProjectOptions) {
          * - Create builder entry in angular.json
          * - Create entry in package.json
          */
-
-        return host;
     };
 }
 
@@ -44,10 +43,10 @@ function createSchematicsFiles(host: Tree, targetDir: string) {
 
 function addBuilderToAngularJson(
     workspace: WorkspaceDefinition,
-    project: ProjectDefinition
+    projectName: string
 ) {
-    project.targets.set('build-schematics', {
+    workspace.projects.get(projectName)?.targets.set('build-schematics', {
         builder: 'ng-schematics-toolkit:build-schematics'
     });
-    updateWorkspace(workspace);
+    return updateWorkspace(workspace);
 }

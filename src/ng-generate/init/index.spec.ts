@@ -1,7 +1,7 @@
 import { Tree } from '@angular-devkit/schematics';
 import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
 import * as path from 'path';
-import { InitSchematicsProjectOptions } from './index';
+import { SchematicInput } from './index';
 
 const collectionPath = path.join(__dirname, '../../collection.json');
 
@@ -47,7 +47,7 @@ describe('ng-generate', () => {
         await runner
             .runSchematicAsync(
                 'init',
-                { project: 'ui' } as InitSchematicsProjectOptions,
+                { project: 'ui' } as SchematicInput,
                 tree
             )
             .toPromise();
