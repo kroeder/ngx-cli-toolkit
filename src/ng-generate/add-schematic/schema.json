@@ -1,0 +1,26 @@
+{
+  "properties": {
+    "project": {
+      "type": "string",
+      "x-prompt": "Name of the Angular project"
+    },
+    "saveAs": {
+      "type": "string",
+      "x-prompt": {
+        "message": "Save package as",
+        "type": "list",
+        "multiselect": false,
+        "items": [
+          { "value": "dependencies", "label": "dependency" },
+          { "value": "devDependencies", "label": "devDependency" }
+        ]
+      }
+    },
+    "path": {
+      "type": "string",
+      "format": "path",
+      "description": "",
+      "visible": false
+    }
+  }
+}

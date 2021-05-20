@@ -1,0 +1,7 @@
+import { noop, Tree } from "@angular-devkit/schematics";
+
+export function ngAdd(options: any) {
+  return async (host: Tree) => {
+    return noop();
+  };
+}

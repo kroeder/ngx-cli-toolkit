@@ -1,0 +1,20 @@
+import { Tree } from '@angular-devkit/schematics';
+import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
+import * as path from 'path';
+
+const collectionPath = path.join(__dirname, '../collection.json');
+
+describe('ng-add', () => {
+  let runner: SchematicTestRunner;
+  let tree: Tree;
+
+  beforeEach(() => {
+    runner = new SchematicTestRunner('schematics', collectionPath);
+    tree = Tree.empty();
+  })
+
+  it('noop', async () => {
+    await runner.runSchematicAsync('ng-add', {}, tree).toPromise();
+    expect(true).toBe(true);
+  });
+});
