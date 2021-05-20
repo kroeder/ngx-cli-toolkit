@@ -1,7 +1,7 @@
 import { Tree } from '@angular-devkit/schematics';
 import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
 import * as path from 'path';
-import { SchematicInput } from './index';
+import { InitSchematicsProjectOptions } from './index';
 
 const collectionPath = path.join(__dirname, '../../collection.json');
 
@@ -15,6 +15,7 @@ describe('ng-generate', () => {
                 sourceRoot: 'projects/ui/src',
                 architect: {
                     build: {
+                        builder: '@angular-devkit/build-angular:ng-packagr',
                         options: {
                             tsConfig: 'projects/ui/tsconfig.lib.json',
                             project: 'projects/ui/ng-package.json'
@@ -28,14 +29,35 @@ describe('ng-generate', () => {
                 }
             },
             defaultProject: 'ui'
-        }
+        },
     };
 
     const angularJsonExpected = {
-        ...angularJson,
+        version: 1,
         projects: {
-            ...angularJson.projects
-
+            ui: {
+                projectType: 'library',
+                root: 'projects/ui',
+                sourceRoot: 'projects/ui/src',
+                architect: {
+                    build: {
+                        builder: '@angular-devkit/build-angular:ng-packagr',
+                        options: {
+                            tsConfig: 'projects/ui/tsconfig.lib.json',
+                            project: 'projects/ui/ng-package.json'
+                        },
+                        configurations: {
+                            production: {
+                                tsConfig: 'projects/ui/tsconfig.lib.prod.json'
+                            }
+                        }
+                    },
+                    'build-schematics': {
+                        builder: 'ng-schematics-toolkit:build-schematics'
+                    }
+                }
+            },
+            defaultProject: 'ui'
         }
     };
 
@@ -47,7 +69,7 @@ describe('ng-generate', () => {
         await runner
             .runSchematicAsync(
                 'init',
-                { project: 'ui' } as SchematicInput,
+                { project: 'ui' } as InitSchematicsProjectOptions,
                 tree
             )
             .toPromise();
@@ -62,5 +84,8 @@ describe('ng-generate', () => {
         expect(
             tree.exists(path.join(schematicsDirectory, 'collection.json'))
         ).toBe(true);
+        expect(
+            JSON.parse(tree.read('angular.json')?.toString('utf8')!)
+        ).toStrictEqual(angularJsonExpected);
     });
 });
