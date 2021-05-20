@@ -18,17 +18,17 @@ describe('ng-generate', () => {
                         builder: '@angular-devkit/build-angular:ng-packagr',
                         options: {
                             tsConfig: 'projects/ui/tsconfig.lib.json',
-                            project: 'projects/ui/ng-package.json'
+                            project: 'projects/ui/ng-package.json',
                         },
                         configurations: {
                             production: {
-                                tsConfig: 'projects/ui/tsconfig.lib.prod.json'
-                            }
-                        }
-                    }
-                }
+                                tsConfig: 'projects/ui/tsconfig.lib.prod.json',
+                            },
+                        },
+                    },
+                },
             },
-            defaultProject: 'ui'
+            defaultProject: 'ui',
         },
     };
 
@@ -44,97 +44,93 @@ describe('ng-generate', () => {
                         builder: '@angular-devkit/build-angular:ng-packagr',
                         options: {
                             tsConfig: 'projects/ui/tsconfig.lib.json',
-                            project: 'projects/ui/ng-package.json'
+                            project: 'projects/ui/ng-package.json',
                         },
                         configurations: {
                             production: {
-                                tsConfig: 'projects/ui/tsconfig.lib.prod.json'
-                            }
-                        }
+                                tsConfig: 'projects/ui/tsconfig.lib.prod.json',
+                            },
+                        },
                     },
                     'build-schematics': {
-                        builder: 'ng-schematics-toolkit:build-schematics'
-                    }
-                }
+                        builder: 'ng-schematics-toolkit:build-schematics',
+                    },
+                },
             },
-            defaultProject: 'ui'
-        }
+            defaultProject: 'ui',
+        },
     };
 
     const packageJson = {
-        'name': 'ui',
-        'version': '0.0.1',
-        'peerDependencies': {
+        name: 'ui',
+        version: '0.0.1',
+        peerDependencies: {
             '@angular/common': '^11.2.13',
-            '@angular/core': '^11.2.13'
+            '@angular/core': '^11.2.13',
         },
-        'dependencies': {
-            'tslib': '^2.0.0'
-        }
+        dependencies: {
+            tslib: '^2.0.0',
+        },
     };
 
     const packageJsonExpected = {
-        'name': 'ui',
-        'version': '0.0.1',
-        'schematics': './schematics/collection.json',
+        name: 'ui',
+        version: '0.0.1',
+        schematics: './schematics/collection.json',
         'ng-update': {
-            'migrations': './schematics/migrations.json',
-            'packageGroup': []
+            migrations: './schematics/migrations.json',
+            packageGroup: [],
         },
-        'peerDependencies': {
+        peerDependencies: {
             '@angular/common': '^11.2.13',
-            '@angular/core': '^11.2.13'
+            '@angular/core': '^11.2.13',
         },
-        'dependencies': {
-            'tslib': '^2.0.0'
-        }
+        dependencies: {
+            tslib: '^2.0.0',
+        },
     };
 
     let tree: Tree;
     let runner: SchematicTestRunner;
-    const schematicsDirectory = path.join(
-        angularJson.projects.ui.root,
-        'schematics'
-    );
+    const projectUiPackageJsonPath = path.join(angularJson.projects.ui.root, 'package.json');
+    const schematicsDirectoryPath = path.join(angularJson.projects.ui.root, 'schematics');
 
     beforeEach(async () => {
         runner = new SchematicTestRunner('schematics', collectionPath);
         tree = Tree.empty();
         tree.create('angular.json', JSON.stringify(angularJson));
-        tree.create('package.json', JSON.stringify(packageJson));
+        tree.create(projectUiPackageJsonPath, JSON.stringify(packageJson));
 
-        await runner
-            .runSchematicAsync(
-                'init',
-                { project: 'ui' } as InitSchematicsProjectOptions,
-                tree
-            )
-            .toPromise();
-
-
+        await runner.runSchematicAsync('init', { project: 'ui' } as InitSchematicsProjectOptions, tree).toPromise();
     });
 
     it('should create migrations.json', () => {
+        const expectedMigrationsJson = {
+            $schema: '../../../node_modules/@angular-devkit/schematics/collection-schema.json',
+            schematics: {},
+        };
+
         expect(
-            tree.exists(path.join(schematicsDirectory, 'migrations.json'))
-        ).toBe(true);
+            JSON.parse(tree.read(path.join(schematicsDirectoryPath, 'migrations.json'))?.toString('utf8')!)
+        ).toStrictEqual(expectedMigrationsJson);
     });
 
     it('should create collection.json', () => {
+        const expectedCollectionJson = {
+            $schema: '../../../node_modules/@angular-devkit/schematics/collection-schema.json',
+            schematics: {},
+        };
+
         expect(
-            tree.exists(path.join(schematicsDirectory, 'collection.json'))
-        ).toBe(true);
+            JSON.parse(tree.read(path.join(schematicsDirectoryPath, 'collection.json'))?.toString('utf8')!)
+        ).toStrictEqual(expectedCollectionJson);
     });
 
     it('should add `build-schematics` builder to angukar.json', () => {
-        expect(
-            JSON.parse(tree.read('angular.json')?.toString('utf8')!)
-        ).toStrictEqual(angularJsonExpected);
+        expect(JSON.parse(tree.read('angular.json')?.toString('utf8')!)).toStrictEqual(angularJsonExpected);
     });
 
     it('should add schematics entries in package.json', () => {
-        expect(
-            JSON.parse(tree.read('package.json')?.toString('utf8')!)
-        ).toStrictEqual(packageJsonExpected);
+        expect(JSON.parse(tree.read(projectUiPackageJsonPath)?.toString('utf8')!)).toStrictEqual(packageJsonExpected);
     });
 });
