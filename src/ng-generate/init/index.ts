@@ -1,4 +1,4 @@
-import { SchematicsException, Tree } from '@angular-devkit/schematics';
+import { chain, SchematicsException, Tree } from '@angular-devkit/schematics';
 import { getWorkspace, updateWorkspace } from '@schematics/angular/utility/workspace';
 import { ProjectDefinition, WorkspaceDefinition } from '@angular-devkit/core/src/workspace';
 import * as path from 'path';
@@ -15,11 +15,11 @@ export function initSchematicsProject(options: InitSchematicsProjectOptions) {
         const schematicsDir = path.join(project.root, 'schematics');
         createSchematicsFiles(host, schematicsDir);
 
-        return addBuilderToAngularJson(workspace, options.project);
+        return chain([
+            addBuilderToAngularJson(workspace, options.project)
+        ]);
 
         /**
-         * - OK Create schematics directory in project path
-         * - OK Create necessary json files (collection.json, migrations.json)
          * - Create builder entry in angular.json
          * - Create entry in package.json
          */
