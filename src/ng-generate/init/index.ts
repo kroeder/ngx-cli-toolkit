@@ -1,7 +1,8 @@
 import { chain, noop, SchematicsException, Tree } from '@angular-devkit/schematics';
 import { getWorkspace, updateWorkspace } from '@schematics/angular/utility/workspace';
-import { ProjectDefinition, WorkspaceDefinition } from '@angular-devkit/core/src/workspace';
+import { WorkspaceDefinition } from '@angular-devkit/core/src/workspace';
 import * as path from 'path';
+import { getProject } from '../../utils/workspace';
 
 export interface InitSchematicsProjectOptions {
     project: string;
@@ -22,16 +23,10 @@ export function initSchematicsProject(options: InitSchematicsProjectOptions) {
     };
 }
 
-async function getProject(workspace: WorkspaceDefinition, projectName: string) {
-    if (workspace.projects.has(projectName)) {
-        return workspace.projects.get(projectName) as ProjectDefinition;
-    } else {
-        throw new SchematicsException(`A project with the name '${projectName}' does not exists`);
-    }
-}
-
 function createSchematicsFiles(host: Tree, targetDir: string, nodeModulesPath: string) {
-    const schemaPath = path.join(nodeModulesPath, '@angular-devkit/schematics/collection-schema.json').replace(/\\/g, '/');
+    const schemaPath = path
+        .join(nodeModulesPath, '@angular-devkit/schematics/collection-schema.json')
+        .replace(/\\/g, '/');
     host.create(
         path.join(targetDir, 'collection.json'),
         JSON.stringify(

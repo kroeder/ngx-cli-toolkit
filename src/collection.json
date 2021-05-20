@@ -10,6 +10,11 @@
       "factory": "./ng-generate/init/index#initSchematicsProject",
       "description": "Initialize schematics project",
       "schema": "./ng-generate/init/schema.json"
+    },
+    "add-schematic": {
+      "factory": "./ng-generate/add-schematic/index#createAddSchematic",
+      "description": "Create ng-add schematic",
+      "schema": "./ng-generate/add-schematic/schema.json"
     }
   }
 }
