@@ -1,28 +1,36 @@
-# Getting Started With Schematics
+# ngx-cli-toolkit - schematics for schematics
 
-This repository is a basic Schematic implementation that serves as a starting point to create and publish Schematics to NPM.
+This package provides schematics that can setup and generate schematics for your library.
+Creating `ng add`, `ng generate`, `ng update` or custom builders for the Angular CLI is 
+not easy and often prevents you from solving your actual problems if you are not familiar with the 
+bootstrapping process.
 
-### Testing
+This package is currently in development and currently only supports Angular CLI mono repositories (see list of issues).
 
-To test locally, install `@angular-devkit/schematics-cli` globally and use the `schematics` command line tool. That tool acts the same as the `generate` command of the Angular CLI, but also has a debug mode.
+## Setup
+Run `ng add` to add this package as well as useful, schematics related, dependencies that most likely 
+be useful for creating your schematics.
 
-Check the documentation with
+### Install
 
-```bash
-schematics --help
+```shell
+ng add ngx-cli-toolkit
 ```
 
-### Unit Testing
+### Bootstrap schematics for an Angular CLI project
 
-`npm run test` will run the unit tests, using Jasmine as a runner and test framework.
-
-### Publishing
-
-To publish, simply do:
-
-```bash
-npm run build
-npm publish
+```shell
+ng generate ngx-cli-toolkit:init
 ```
 
-That's it!
+### Generating `ng-add` schematics
+
+```shell
+ng generate ngx-cli-toolkit:add-schematic
+```
+
+### Generating `ng-generate` schematics
+
+```shell
+ng generate ngx-cli-toolkit:generate-schematic name-of-your-schematic
+```
