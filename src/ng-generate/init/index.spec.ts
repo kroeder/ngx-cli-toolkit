@@ -53,7 +53,7 @@ describe('ng-generate', () => {
                         },
                     },
                     'build-schematics': {
-                        builder: 'ng-schematics-toolkit:build-schematics',
+                        builder: 'ngx-cli-toolkit:build-schematics',
                     },
                 },
             },
