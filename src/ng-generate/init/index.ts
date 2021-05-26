@@ -2,7 +2,7 @@ import { chain, noop, SchematicsException, Tree } from '@angular-devkit/schemati
 import { getWorkspace, updateWorkspace } from '@schematics/angular/utility/workspace';
 import { WorkspaceDefinition } from '@angular-devkit/core/src/workspace';
 import * as path from 'path';
-import { getProject } from '../../utils/workspace';
+import { getProject } from '../../utils/utils';
 
 export interface InitSchematicsProjectOptions {
     project: string;

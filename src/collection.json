@@ -15,6 +15,11 @@
       "factory": "./ng-generate/add-schematic/index#createAddSchematic",
       "description": "Create ng-add schematic",
       "schema": "./ng-generate/add-schematic/schema.json"
+    },
+    "generate-schematic": {
+      "factory": "./ng-generate/generate-schematic/index#createGenerateSchematic",
+      "description": "Create ng-generate schematic",
+      "schema": "./ng-generate/generate-schematic/schema.json"
     }
   }
 }
