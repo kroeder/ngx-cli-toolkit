@@ -1,5 +1,5 @@
 {
-  "name": "ng-schematics-toolkit",
+  "name": "ngx-cli-toolkit",
   "version": "0.0.2",
   "description": "A toolkit that helps with the setup and generation of schematics in projects.",
   "scripts": {

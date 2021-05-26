@@ -3,7 +3,7 @@
   "schematics": {
     "ng-add": {
       "save": "devDependencies",
-      "description": "Add and bootstrap ng-schematics-toolkit",
+      "description": "Add and bootstrap ngx-cli-toolkit",
       "factory": "./ng-add/index#ngAdd"
     },
     "init": {

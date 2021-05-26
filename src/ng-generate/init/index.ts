@@ -56,7 +56,7 @@ function createSchematicsFiles(host: Tree, targetDir: string, nodeModulesPath: s
 
 function addBuilderToAngularJson(workspace: WorkspaceDefinition, projectName: string) {
     workspace.projects.get(projectName)?.targets.set('build-schematics', {
-        builder: 'ng-schematics-toolkit:build-schematics',
+        builder: 'ngx-cli-toolkit:build-schematics',
     });
     return updateWorkspace(workspace);
 }
