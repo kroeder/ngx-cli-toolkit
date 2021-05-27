@@ -12,7 +12,7 @@ import {
 import { getWorkspace } from '@schematics/angular/utility/workspace';
 import { ProjectDefinition } from '@angular-devkit/core/src/workspace';
 import * as path from 'path';
-import { getCollectionPath, getParsedPath, getProject } from '../../utils/utils';
+import { getCollectionJsonPath, getParsedPath, getProject } from '../../utils/utils';
 
 export interface InitSchematicsProjectOptions {
     path: string;
@@ -37,7 +37,7 @@ function updateCollectionJson(
     pathToSchematic: string,
     options: InitSchematicsProjectOptions
 ) {
-    const collectionPath = getCollectionPath(host, project);
+    const collectionPath = getCollectionJsonPath(host, project);
     const collectionJsonBuffer = host.read(collectionPath);
     if (!collectionJsonBuffer) {
         throw new SchematicsException(`Could not read file '${collectionPath}'`);

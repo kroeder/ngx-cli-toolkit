@@ -11,13 +11,23 @@ export function getParsedPath(project: ProjectDefinition, path: string, dirName:
     return parseName(path as string, dirName);
 }
 
-export function getCollectionPath(host: Tree, project: ProjectDefinition) {
-    const packageJsonPath = path.join(project.root, 'package.json');
-    const packageJsonBuffer = host.read(packageJsonPath);
-    if (!packageJsonBuffer) {
-        throw new SchematicsException(`Could not read file '${packageJsonPath}'`);
+export function readJson(host: Tree, path: string) {
+    const jsonBuffer = host.read(path);
+    if (!jsonBuffer) {
+        throw new SchematicsException(`Could not read file '${path}'`);
     }
-    const packageJson = JSON.parse(packageJsonBuffer.toString('utf8'));
+    return JSON.parse(jsonBuffer.toString('utf8'));
+}
+
+export function getMigrationsJsonPath(host: Tree, project: ProjectDefinition) {
+    const packageJsonPath = path.join(project.root, 'package.json');
+    const packageJson = readJson(host, packageJsonPath);
+    return path.join(project.root, packageJson['ng-update'].migrations);
+}
+
+export function getCollectionJsonPath(host: Tree, project: ProjectDefinition) {
+    const packageJsonPath = path.join(project.root, 'package.json');
+    const packageJson = readJson(host, packageJsonPath);
     return path.join(project.root, packageJson.schematics);
 }
 

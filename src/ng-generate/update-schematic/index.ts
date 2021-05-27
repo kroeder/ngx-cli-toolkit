@@ -1,42 +1,32 @@
-import {
-    apply,
-    applyTemplates,
-    chain,
-    mergeWith,
-    move,
-    noop,
-    SchematicsException,
-    Tree,
-    url,
-} from '@angular-devkit/schematics';
+import { apply, applyTemplates, chain, mergeWith, move, noop, Tree, url } from '@angular-devkit/schematics';
 import { ProjectDefinition } from '@angular-devkit/core/src/workspace';
 import * as path from 'path';
 import { camelize, dasherize } from '@angular-devkit/core/src/utils/strings';
 import { getWorkspace } from '@schematics/angular/utility/workspace';
 import { strings } from '@angular-devkit/core';
-import { getCollectionJsonPath, getParsedPath, getProject } from '../../utils/utils';
+import { getMigrationsJsonPath, getParsedPath, getProject, readJson } from '../../utils/utils';
 
-export interface GenerateSchematicOptions {
+export interface UpdateSchematicOptions {
     name: string;
     path: string;
     project: string;
     description: string;
 }
 
-export function createGenerateSchematic(options: GenerateSchematicOptions) {
+export function createUpdateSchematic(options: UpdateSchematicOptions) {
     return async (host: Tree) => {
         const workspace = await getWorkspace(host);
         const project = await getProject(workspace, options.project);
         const parsedPath = getParsedPath(project, options.path, options.name);
 
         const generatedSchematicDir = path.join(__dirname, parsedPath.path, dasherize(options.name));
-        const collectionJsonPath = path.join(__dirname, getCollectionJsonPath(host, project));
-        const relativePathToCollectionJson = path.relative(generatedSchematicDir, collectionJsonPath);
+        const migrationsJson = path.join(__dirname, getMigrationsJsonPath(host, project));
+        const relativePathToMigrationsJson = path.relative(generatedSchematicDir, migrationsJson);
 
         const templateSource = apply(url('./files'), [
             applyTemplates({
                 name: options.name,
-                collectionJsonPath: relativePathToCollectionJson.replace(/\\/g, '/'),
+                migrationsJsonPath: relativePathToMigrationsJson.replace(/\\/g, '/'),
                 camelize: strings.camelize,
                 classify: strings.classify,
                 dasherize: strings.dasherize,
@@ -44,35 +34,31 @@ export function createGenerateSchematic(options: GenerateSchematicOptions) {
             move(parsedPath.path),
         ]);
 
-        return chain([mergeWith(templateSource), updateCollectionJson(host, project, parsedPath.path, options)]);
+        return chain([mergeWith(templateSource), updateMigrationsJson(host, project, parsedPath.path, options)]);
     };
 }
 
-function updateCollectionJson(
+function updateMigrationsJson(
     host: Tree,
     project: ProjectDefinition,
     schematicPath: string,
-    options: GenerateSchematicOptions
+    options: UpdateSchematicOptions
 ) {
-    const collectionPath = getCollectionJsonPath(host, project);
-    const collectionJsonBuffer = host.read(collectionPath);
+    const migrationsJsonPath = getMigrationsJsonPath(host, project);
+    const migrationsJson = readJson(host, migrationsJsonPath);
     const schematicName = options.name;
-    if (!collectionJsonBuffer) {
-        throw new SchematicsException(`Could not read file '${collectionPath}'`);
-    }
 
-    const collectionJson = JSON.parse(collectionJsonBuffer.toString('utf8'));
     const relativePathToSchematic = path
         .relative(
-            path.join(process.cwd(), path.dirname(collectionPath)),
+            path.join(process.cwd(), path.dirname(migrationsJsonPath)),
             path.join(process.cwd(), schematicPath, schematicName, 'index')
         )
         .replace(/\\/g, '/');
 
-    const updatedCollectionJson = {
-        ...collectionJson,
+    const updatedMigrationsJson = {
+        ...migrationsJson,
         schematics: {
-            ...collectionJson.schematics,
+            ...migrationsJson.schematics,
             [dasherize(schematicName)]: {
                 description: options.description,
                 factory: `${relativePathToSchematic}#${camelize(options.name)}`,
@@ -80,7 +66,7 @@ function updateCollectionJson(
             },
         },
     };
-    host.overwrite(collectionPath, JSON.stringify(updatedCollectionJson, null, 2));
+    host.overwrite(migrationsJsonPath, JSON.stringify(updatedMigrationsJson, null, 2));
 
     return noop();
 }
