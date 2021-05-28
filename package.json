@@ -1,6 +1,6 @@
 {
   "name": "ngx-cli-toolkit",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A toolkit that helps with the setup and generation of schematics in projects.",
   "scripts": {
     "build": "tsc -p tsconfig.json",
