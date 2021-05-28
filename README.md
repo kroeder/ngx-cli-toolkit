@@ -34,3 +34,9 @@ ng generate ngx-cli-toolkit:add-schematic
 ```shell
 ng generate ngx-cli-toolkit:generate-schematic name-of-your-schematic
 ```
+
+### Generating `ng-update` schematics
+
+```shell
+ng generate ngx-cli-toolkit:update-schematic name-of-your-schematic
+```

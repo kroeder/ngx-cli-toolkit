@@ -1,0 +1,20 @@
+import { Tree } from '@angular-devkit/schematics';
+import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
+import * as path from 'path';
+
+const migrationsPath = path.join(__dirname, '<%= migrationsJsonPath %>');
+
+describe('<%= dasherize(name) %>', () => {
+  let runner: SchematicTestRunner;
+  let tree: Tree;
+
+  beforeEach(() => {
+    runner = new SchematicTestRunner('schematics', migrationsPath);
+    tree = Tree.empty();
+  });
+
+  it('noop', async () => {
+    await runner.runSchematicAsync('<%= dasherize(name) %>', {}, tree).toPromise();
+    expect(true).toBe(true);
+  });
+});
