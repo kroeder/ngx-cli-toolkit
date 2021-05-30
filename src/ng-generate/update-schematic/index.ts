@@ -11,6 +11,7 @@ export interface UpdateSchematicOptions {
     path: string;
     project: string;
     description: string;
+    version: string;
 }
 
 export function createUpdateSchematic(options: UpdateSchematicOptions) {
@@ -63,6 +64,7 @@ function updateMigrationsJson(
                 description: options.description,
                 factory: `${relativePathToSchematic}#${camelize(options.name)}`,
                 schema: `${relativePathToSchematic.replace('index', 'schema.json')}`,
+                version: options.version
             },
         },
     };

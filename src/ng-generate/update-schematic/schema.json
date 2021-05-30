@@ -16,6 +16,10 @@
       "type": "string",
       "x-prompt": "Schematic description"
     },
+    "version": {
+      "type": "string",
+      "x-prompt": "Update version"
+    },
     "path": {
       "type": "string",
       "format": "path",
