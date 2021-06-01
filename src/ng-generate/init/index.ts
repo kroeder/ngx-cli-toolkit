@@ -1,24 +1,25 @@
 import { chain, noop, SchematicsException, Tree } from '@angular-devkit/schematics';
-import { getWorkspace, updateWorkspace } from '@schematics/angular/utility/workspace';
+import { updateWorkspace } from '@schematics/angular/utility/workspace';
 import { WorkspaceDefinition } from '@angular-devkit/core/src/workspace';
 import * as path from 'path';
-import { getProject } from '../../utils/utils';
+import { findPackageJson, getParsedPath, removeLastSegmentOfPath } from "../../utils/utils";
+import { Location } from '@schematics/angular/utility/parse-name';
 
 export interface InitSchematicsProjectOptions {
-    project: string;
+    path: string;
 }
 
 export function initSchematicsProject(options: InitSchematicsProjectOptions) {
     return async (host: Tree) => {
-        const workspace = await getWorkspace(host);
-        const project = await getProject(workspace, options.project);
-        const schematicsDir = path.join(project.root, 'schematics');
-        const relativePathToNodeModules = path.relative(schematicsDir, path.join(process.cwd(), 'node_modules'));
+        const parsedPath = getParsedPath(options.path, 'schematics');
+        const projectRoot = removeLastSegmentOfPath(findPackageJson(host, parsedPath));
+        const schematicsDir = path.join(projectRoot, parsedPath.name);
+        const relativePathToNodeModules = path.relative(path.join(process.cwd(), projectRoot, 'schematics'), path.join(process.cwd(), 'node_modules'));
 
         return chain([
             createSchematicsConfigurationFiles(host, schematicsDir, relativePathToNodeModules),
             // addBuilderToAngularJson(workspace, options.project),
-            addSchematicsFieldsToPackageJson(host, project.root),
+            addSchematicsFieldsToPackageJson(host, parsedPath),
         ]);
     };
 }
@@ -63,8 +64,8 @@ function addBuilderToAngularJson(workspace: WorkspaceDefinition, projectName: st
     return updateWorkspace(workspace);
 }
 
-function addSchematicsFieldsToPackageJson(host: Tree, projectRoot: string) {
-    const packageJsonPath = path.join(projectRoot, 'package.json');
+function addSchematicsFieldsToPackageJson(host: Tree, parsedPath: Location) {
+    const packageJsonPath = findPackageJson(host, parsedPath);
     const packageJsonBuffer = host.read(packageJsonPath);
     if (!packageJsonBuffer) {
         throw new SchematicsException(`Could not find package.json in '${packageJsonPath}'`);

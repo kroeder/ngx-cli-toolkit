@@ -1,8 +1,10 @@
 {
   "properties": {
-    "project": {
+    "path": {
       "type": "string",
-      "x-prompt": "Name of the Angular project"
+      "format": "path",
+      "description": "",
+      "visible": false
     }
   }
 }

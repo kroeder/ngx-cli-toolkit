@@ -102,7 +102,10 @@ describe('ng-generate', () => {
         tree.create('angular.json', JSON.stringify(angularJson));
         tree.create(projectUiPackageJsonPath, JSON.stringify(packageJson));
 
-        await runner.runSchematicAsync('init', { project: 'ui' } as InitSchematicsProjectOptions, tree).toPromise();
+        const options: InitSchematicsProjectOptions = {
+            path: `${angularJson.projects.ui.root}/subdirectory` as string,
+        };
+        await runner.runSchematicAsync('init', options, tree).toPromise();
     });
 
     it('should create migrations.json', () => {
@@ -110,10 +113,8 @@ describe('ng-generate', () => {
             $schema: '../../../node_modules/@angular-devkit/schematics/collection-schema.json',
             schematics: {},
         };
-
-        expect(
-            JSON.parse(tree.read(path.join(schematicsDirectoryPath, 'migrations.json'))?.toString('utf8')!)
-        ).toStrictEqual(expectedMigrationsJson);
+        const migrationJson = tree.read(path.join(schematicsDirectoryPath, 'migrations.json'))?.toString('utf8')!;
+        expect(JSON.parse(migrationJson)).toMatchObject(expectedMigrationsJson);
     });
 
     it('should create collection.json', () => {
@@ -122,9 +123,8 @@ describe('ng-generate', () => {
             schematics: {},
         };
 
-        expect(
-            JSON.parse(tree.read(path.join(schematicsDirectoryPath, 'collection.json'))?.toString('utf8')!)
-        ).toStrictEqual(expectedCollectionJson);
+        const collectionJson = tree.read(path.join(schematicsDirectoryPath, 'collection.json'))?.toString('utf8')!;
+        expect(JSON.parse(collectionJson)).toMatchObject(expectedCollectionJson);
     });
 
     // todo: enable after the implementation of the builder itself

@@ -8,7 +8,6 @@ import { Location } from '@schematics/angular/utility/parse-name';
 export interface UpdateSchematicOptions {
     name: string;
     path: string;
-    project: string;
     description: string;
     version: string;
 }

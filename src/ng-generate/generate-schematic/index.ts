@@ -18,7 +18,6 @@ import { Location } from '@schematics/angular/utility/parse-name';
 export interface GenerateSchematicOptions {
     name: string;
     path: string;
-    project: string;
     description: string;
 }
 

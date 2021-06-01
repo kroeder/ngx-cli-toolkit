@@ -15,7 +15,6 @@ import { Location } from '@schematics/angular/utility/parse-name';
 
 export interface InitSchematicsProjectOptions {
     path: string;
-    project: string;
     saveAs: 'dependencies' | 'devDependencies' | '';
 }
 

@@ -1,8 +1,8 @@
 import { Tree } from '@angular-devkit/schematics';
 import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
 import * as path from 'path';
-import { PathLike } from 'fs';
 import { camelize } from '@angular-devkit/core/src/utils/strings';
+import { UpdateSchematicOptions } from "./index";
 
 const testCollectionPath = path.join(__dirname, '../../collection.json');
 
@@ -60,14 +60,16 @@ describe('ng-update', () => {
     it('should generate files', async () => {
         tree.create('angular.json', JSON.stringify(angularJson));
         tree.create(path.join(schematicsPath, 'migrations.json'), JSON.stringify(migrationsJson));
+        const options: UpdateSchematicOptions = {
+            name: newSchematicName,
+            version: '1.2.3',
+            description: 'A description',
+            path: `${schematicsPath}/ng-update` as string,
+        };
         await runner
             .runSchematicAsync(
                 'update-schematic',
-                {
-                    name: newSchematicName,
-                    project: 'ui',
-                    path: `${schematicsPath}/ng-update` as PathLike,
-                },
+                options,
                 tree
             )
             .toPromise();
@@ -81,14 +83,16 @@ describe('ng-update', () => {
     it('should add migrations.json entry', async () => {
         tree.create('angular.json', JSON.stringify(angularJson));
         tree.create(path.join(schematicsPath, 'migrations.json'), JSON.stringify(migrationsJson));
+        const options: UpdateSchematicOptions = {
+            name: newSchematicName,
+            version: '1.2.3',
+            description: 'A description',
+            path: `${schematicsPath}/ng-update` as string,
+        };
         await runner
             .runSchematicAsync(
                 'update-schematic',
-                {
-                    name: newSchematicName,
-                    project: 'ui',
-                    path: `${schematicsPath}/ng-update` as PathLike,
-                },
+                options,
                 tree
             )
             .toPromise();

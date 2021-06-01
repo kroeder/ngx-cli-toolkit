@@ -1,9 +1,5 @@
 {
   "properties": {
-    "project": {
-      "type": "string",
-      "x-prompt": "Name of the Angular project"
-    },
     "saveAs": {
       "type": "string",
       "x-prompt": {

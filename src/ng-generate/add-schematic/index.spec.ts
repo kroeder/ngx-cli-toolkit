@@ -2,6 +2,7 @@ import { Tree } from '@angular-devkit/schematics';
 import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
 import * as path from 'path';
 import { PathLike } from 'fs';
+import { InitSchematicsProjectOptions } from './index';
 
 const testCollectionPath = path.join(__dirname, '../../collection.json');
 
@@ -55,17 +56,12 @@ describe('ng-generate', () => {
     it('should generate files', async () => {
         tree.create('angular.json', JSON.stringify(angularJson));
         tree.create(path.join(schematicsPath, 'collection.json'), JSON.stringify(collectionJson));
-        await runner
-            .runSchematicAsync(
-                'add-schematic',
-                {
-                    project: 'ui',
-                    saveAs: 'dependencies',
-                    path: schematicsPath as PathLike,
-                },
-                tree
-            )
-            .toPromise();
+        const options: InitSchematicsProjectOptions = {
+            saveAs: 'dependencies',
+            path: schematicsPath as string,
+        };
+
+        await runner.runSchematicAsync('add-schematic', options, tree).toPromise();
 
         expect(tree.exists(path.join(schematicsPath, 'ng-add', 'index.ts'))).toBe(true);
         expect(tree.exists(path.join(schematicsPath, 'ng-add', 'index.spec.ts'))).toBe(true);

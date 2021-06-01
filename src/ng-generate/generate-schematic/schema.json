@@ -8,10 +8,6 @@
         "index": 0
       }
     },
-    "project": {
-      "type": "string",
-      "x-prompt": "Name of the Angular project"
-    },
     "description": {
       "type": "string",
       "x-prompt": "Schematic description"

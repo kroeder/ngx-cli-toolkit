@@ -1,8 +1,8 @@
 import { Tree } from '@angular-devkit/schematics';
 import { SchematicTestRunner } from '@angular-devkit/schematics/testing';
 import * as path from 'path';
-import { PathLike } from 'fs';
 import { camelize } from '@angular-devkit/core/src/utils/strings';
+import { GenerateSchematicOptions } from './index';
 
 const testCollectionPath = path.join(__dirname, '../../collection.json');
 
@@ -58,17 +58,12 @@ describe('ng-generate', () => {
     it('should generate files', async () => {
         tree.create('angular.json', JSON.stringify(angularJson));
         tree.create(path.join(schematicsPath, 'collection.json'), JSON.stringify(collectionJson));
-        await runner
-            .runSchematicAsync(
-                'generate-schematic',
-                {
-                    name: newSchematicName,
-                    project: 'ui',
-                    path: `${schematicsPath}/ng-generate` as PathLike,
-                },
-                tree
-            )
-            .toPromise();
+        const options: GenerateSchematicOptions = {
+            name: newSchematicName,
+            description: 'A description',
+            path: `${schematicsPath}/ng-generate` as string,
+        };
+        await runner.runSchematicAsync('generate-schematic', options, tree).toPromise();
 
         const pathToNewSchematic = path.join(schematicsPath, 'ng-generate', newSchematicName);
 
@@ -79,17 +74,12 @@ describe('ng-generate', () => {
     it('should add collection.json entry', async () => {
         tree.create('angular.json', JSON.stringify(angularJson));
         tree.create(path.join(schematicsPath, 'collection.json'), JSON.stringify(collectionJson));
-        await runner
-            .runSchematicAsync(
-                'generate-schematic',
-                {
-                    name: newSchematicName,
-                    project: 'ui',
-                    path: `${schematicsPath}/ng-generate` as PathLike,
-                },
-                tree
-            )
-            .toPromise();
+        const options: GenerateSchematicOptions = {
+            name: newSchematicName,
+            description: 'A description',
+            path: `${schematicsPath}/ng-generate` as string,
+        };
+        await runner.runSchematicAsync('generate-schematic', options, tree).toPromise();
 
         const testCollectionJson = JSON.parse(
             tree.read(path.join(projectPath, packageJson.schematics))?.toString('utf8')!
