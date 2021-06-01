@@ -1,10 +1,9 @@
 import { apply, applyTemplates, chain, mergeWith, move, noop, Tree, url } from '@angular-devkit/schematics';
-import { ProjectDefinition } from '@angular-devkit/core/src/workspace';
 import * as path from 'path';
 import { camelize, dasherize } from '@angular-devkit/core/src/utils/strings';
-import { getWorkspace } from '@schematics/angular/utility/workspace';
 import { strings } from '@angular-devkit/core';
-import { getMigrationsJsonPath, getParsedPath, getProject, readJson } from '../../utils/utils';
+import { getMigrationsJsonPath, getParsedPath, readJson } from '../../utils/utils';
+import { Location } from '@schematics/angular/utility/parse-name';
 
 export interface UpdateSchematicOptions {
     name: string;
@@ -16,12 +15,10 @@ export interface UpdateSchematicOptions {
 
 export function createUpdateSchematic(options: UpdateSchematicOptions) {
     return async (host: Tree) => {
-        const workspace = await getWorkspace(host);
-        const project = await getProject(workspace, options.project);
-        const parsedPath = getParsedPath(project, options.path, options.name);
+        const parsedPath = getParsedPath(options.path, options.name);
 
         const generatedSchematicDir = path.join(__dirname, parsedPath.path, dasherize(options.name));
-        const migrationsJson = path.join(__dirname, getMigrationsJsonPath(host, project));
+        const migrationsJson = path.join(__dirname, getMigrationsJsonPath(host, parsedPath));
         const relativePathToMigrationsJson = path.relative(generatedSchematicDir, migrationsJson);
 
         const templateSource = apply(url('./files'), [
@@ -35,24 +32,19 @@ export function createUpdateSchematic(options: UpdateSchematicOptions) {
             move(parsedPath.path),
         ]);
 
-        return chain([mergeWith(templateSource), updateMigrationsJson(host, project, parsedPath.path, options)]);
+        return chain([mergeWith(templateSource), updateMigrationsJson(host, parsedPath, options)]);
     };
 }
 
-function updateMigrationsJson(
-    host: Tree,
-    project: ProjectDefinition,
-    schematicPath: string,
-    options: UpdateSchematicOptions
-) {
-    const migrationsJsonPath = getMigrationsJsonPath(host, project);
+function updateMigrationsJson(host: Tree, parsedPath: Location, options: UpdateSchematicOptions) {
+    const migrationsJsonPath = getMigrationsJsonPath(host, parsedPath);
     const migrationsJson = readJson(host, migrationsJsonPath);
     const schematicName = options.name;
 
     const relativePathToSchematic = path
         .relative(
             path.join(process.cwd(), path.dirname(migrationsJsonPath)),
-            path.join(process.cwd(), schematicPath, schematicName, 'index')
+            path.join(process.cwd(), parsedPath.path, schematicName, 'index')
         )
         .replace(/\\/g, '/');
 
@@ -64,7 +56,7 @@ function updateMigrationsJson(
                 description: options.description,
                 factory: `${relativePathToSchematic}#${camelize(options.name)}`,
                 schema: `${relativePathToSchematic.replace('index', 'schema.json')}`,
-                version: options.version
+                version: options.version,
             },
         },
     };

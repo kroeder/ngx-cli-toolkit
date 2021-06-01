@@ -9,10 +9,9 @@ import {
     Tree,
     url,
 } from '@angular-devkit/schematics';
-import { getWorkspace } from '@schematics/angular/utility/workspace';
-import { ProjectDefinition } from '@angular-devkit/core/src/workspace';
 import * as path from 'path';
-import { getCollectionJsonPath, getParsedPath, getProject } from '../../utils/utils';
+import { getCollectionJsonPath, getParsedPath } from '../../utils/utils';
+import { Location } from '@schematics/angular/utility/parse-name';
 
 export interface InitSchematicsProjectOptions {
     path: string;
@@ -22,22 +21,15 @@ export interface InitSchematicsProjectOptions {
 
 export function createAddSchematic(options: InitSchematicsProjectOptions) {
     return async (host: Tree) => {
-        const workspace = await getWorkspace(host);
-        const project = await getProject(workspace, options.project);
-        const parsedPath = getParsedPath(project, options.path, 'ng-add');
+        const parsedPath = getParsedPath(options.path, 'ng-add');
         const templateSource = apply(url('./files'), [applyTemplates({}), move(parsedPath.path)]);
 
-        return chain([mergeWith(templateSource), updateCollectionJson(host, project, parsedPath.path, options)]);
+        return chain([mergeWith(templateSource), updateCollectionJson(host, parsedPath, options)]);
     };
 }
 
-function updateCollectionJson(
-    host: Tree,
-    project: ProjectDefinition,
-    pathToSchematic: string,
-    options: InitSchematicsProjectOptions
-) {
-    const collectionPath = getCollectionJsonPath(host, project);
+function updateCollectionJson(host: Tree, parsedPath: Location, options: InitSchematicsProjectOptions) {
+    const collectionPath = getCollectionJsonPath(host, parsedPath);
     const collectionJsonBuffer = host.read(collectionPath);
     if (!collectionJsonBuffer) {
         throw new SchematicsException(`Could not read file '${collectionPath}'`);
@@ -47,7 +39,7 @@ function updateCollectionJson(
     const relativePathToSchematic = path
         .relative(
             path.join(process.cwd(), path.dirname(collectionPath)),
-            path.join(process.cwd(), pathToSchematic, 'ng-add', 'index')
+            path.join(process.cwd(), parsedPath.path, 'ng-add', 'index')
         )
         .replace(/\\/g, '/');
 
