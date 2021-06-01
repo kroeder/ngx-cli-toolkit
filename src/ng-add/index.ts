@@ -1,14 +1,16 @@
-import { Rule, SchematicContext, Tree } from '@angular-devkit/schematics';
+import { noop, Rule, SchematicContext, SchematicsException, Tree } from "@angular-devkit/schematics";
 import {
     addPackageJsonDependency,
-    NodeDependencyType,
-} from '@schematics/angular/utility/dependencies';
+    getPackageJsonDependency,
+    NodeDependencyType
+} from "@schematics/angular/utility/dependencies";
+import { NodePackageInstallTask } from '@angular-devkit/schematics/tasks';
 
 export function ngAdd(_options: any): Rule {
-    return (host: Tree, _context: SchematicContext) => {
+    return (host: Tree, context: SchematicContext) => {
         addDependencies(host);
-
-        return host;
+        context.addTask(new NodePackageInstallTask());
+        return noop();
     };
 }
 
