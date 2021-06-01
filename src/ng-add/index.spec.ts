@@ -7,14 +7,18 @@ const collectionPath = path.join(__dirname, '../collection.json');
 describe('ng-add', () => {
     it('should add devDependencies', async () => {
         const angularJson = {
-            dependencies: {},
+            dependencies: {
+                '@angular/core': '~11.2.11',
+            },
             devDependencies: {},
         };
 
         const angularJsonExpected = {
-            dependencies: {},
+            dependencies: {
+                '@angular/core': '~11.2.11',
+            },
             devDependencies: {
-                '@angular-devkit/architect': '~0.1102.0',
+                '@angular-devkit/architect': '~0.1102.11',
                 '@angular-devkit/core': '~11.2.11',
                 '@angular-devkit/schematics': '~11.2.11',
                 '@schematics/angular': '~11.2.11',
@@ -27,8 +31,6 @@ describe('ng-add', () => {
 
         await runner.runSchematicAsync('ng-add', {}, tree).toPromise();
 
-        expect(JSON.parse(tree.read('package.json')!.toString())).toEqual(
-            angularJsonExpected
-        );
+        expect(JSON.parse(tree.read('package.json')!.toString())).toEqual(angularJsonExpected);
     });
 });
