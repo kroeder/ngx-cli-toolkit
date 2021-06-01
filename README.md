@@ -5,25 +5,34 @@ Creating `ng add`, `ng generate`, `ng update` or custom builders for the Angular
 not easy and often prevents you from solving your actual problems if you are not familiar with the 
 bootstrapping process.
 
-This package is currently in development and currently only supports Angular CLI mono repositories (see list of issues).
+**This package is in a very early stage, and most likely has bugs.**
 
-## Setup
-Run `ng add` to add this package as well as useful, schematics related, dependencies that most likely 
-be useful for creating your schematics.
+## Schematics
 
 ### Install
+
+Run `ng add` to add this package as well as useful, schematics related, dependencies that are
+useful for creating schematics.
 
 ```shell
 ng add ngx-cli-toolkit
 ```
 
-### Bootstrap schematics for an Angular CLI project
+### Bootstrap schematics project
+
+The `init` schematic tries to discover the location of a package.json based on the directory the schematic was 
+executed from. 
+
+It will add the necessary schematic fields to the package.json as well as create json files that manage 
+the `ng update` and `ng generate` schematics in your project.
 
 ```shell
 ng generate ngx-cli-toolkit:init
 ```
 
-### Generating `ng-add` schematics
+### Generating `ng-add` 
+
+This creates a schematic that allows others to add your package using `ng add`.
 
 ```shell
 ng generate ngx-cli-toolkit:add-schematic
@@ -31,11 +40,15 @@ ng generate ngx-cli-toolkit:add-schematic
 
 ### Generating `ng-generate` schematics
 
+This creates a `ng generate` schematic.
+
 ```shell
 ng generate ngx-cli-toolkit:generate-schematic name-of-your-schematic
 ```
 
 ### Generating `ng-update` schematics
+
+This creates a `ng update` schematic.
 
 ```shell
 ng generate ngx-cli-toolkit:update-schematic name-of-your-schematic
