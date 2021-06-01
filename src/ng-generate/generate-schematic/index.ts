@@ -9,12 +9,11 @@ import {
     Tree,
     url,
 } from '@angular-devkit/schematics';
-import { ProjectDefinition } from '@angular-devkit/core/src/workspace';
 import * as path from 'path';
 import { camelize, dasherize } from '@angular-devkit/core/src/utils/strings';
-import { getWorkspace } from '@schematics/angular/utility/workspace';
 import { strings } from '@angular-devkit/core';
-import { getCollectionJsonPath, getParsedPath, getProject } from '../../utils/utils';
+import { getCollectionJsonPath, getParsedPath } from '../../utils/utils';
+import { Location } from '@schematics/angular/utility/parse-name';
 
 export interface GenerateSchematicOptions {
     name: string;
@@ -25,12 +24,10 @@ export interface GenerateSchematicOptions {
 
 export function createGenerateSchematic(options: GenerateSchematicOptions) {
     return async (host: Tree) => {
-        const workspace = await getWorkspace(host);
-        const project = await getProject(workspace, options.project);
-        const parsedPath = getParsedPath(project, options.path, options.name);
+        const parsedPath = getParsedPath(options.path, options.name);
 
         const generatedSchematicDir = path.join(__dirname, parsedPath.path, dasherize(options.name));
-        const collectionJsonPath = path.join(__dirname, getCollectionJsonPath(host, project));
+        const collectionJsonPath = path.join(__dirname, getCollectionJsonPath(host, parsedPath));
         const relativePathToCollectionJson = path.relative(generatedSchematicDir, collectionJsonPath);
 
         const templateSource = apply(url('./files'), [
@@ -44,17 +41,12 @@ export function createGenerateSchematic(options: GenerateSchematicOptions) {
             move(parsedPath.path),
         ]);
 
-        return chain([mergeWith(templateSource), updateCollectionJson(host, project, parsedPath.path, options)]);
+        return chain([mergeWith(templateSource), updateCollectionJson(host, parsedPath, options)]);
     };
 }
 
-function updateCollectionJson(
-    host: Tree,
-    project: ProjectDefinition,
-    schematicPath: string,
-    options: GenerateSchematicOptions
-) {
-    const collectionPath = getCollectionJsonPath(host, project);
+function updateCollectionJson(host: Tree, parsedPath: Location, options: GenerateSchematicOptions) {
+    const collectionPath = getCollectionJsonPath(host, parsedPath);
     const collectionJsonBuffer = host.read(collectionPath);
     const schematicName = options.name;
     if (!collectionJsonBuffer) {
@@ -65,7 +57,7 @@ function updateCollectionJson(
     const relativePathToSchematic = path
         .relative(
             path.join(process.cwd(), path.dirname(collectionPath)),
-            path.join(process.cwd(), schematicPath, schematicName, 'index')
+            path.join(process.cwd(), parsedPath.path, schematicName, 'index')
         )
         .replace(/\\/g, '/');
 

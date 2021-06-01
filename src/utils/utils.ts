@@ -1,14 +1,24 @@
 import { SchematicsException, Tree } from '@angular-devkit/schematics';
 import { ProjectDefinition, WorkspaceDefinition } from '@angular-devkit/core/src/workspace';
 import * as path from 'path';
-import { buildDefaultPath } from '@schematics/angular/utility/workspace';
-import { parseName } from '@schematics/angular/utility/parse-name';
+import { Location, parseName } from '@schematics/angular/utility/parse-name';
 
-export function getParsedPath(project: ProjectDefinition, path: string, dirName: string) {
-    if (path === undefined && project) {
-        path = buildDefaultPath(project);
-    }
+export function getParsedPath(path: string, dirName: string) {
     return parseName(path as string, dirName);
+}
+
+export function findPackageJson(host: Tree, parsedPath: Location) {
+    const pathSegments = parsedPath.path.split('/');
+    let pathToPackageJson: string;
+    for (let i = 0; i < pathSegments.length; i++) {
+        pathToPackageJson = `${pathSegments.join('/')}/package.json`;
+        if (host.exists(pathToPackageJson)) {
+            return pathToPackageJson;
+        } else {
+            pathSegments.pop();
+        }
+    }
+    throw new SchematicsException(`Could not locate package.json based on path ${parsedPath.path}`);
 }
 
 export function readJson(host: Tree, path: string) {
@@ -19,16 +29,16 @@ export function readJson(host: Tree, path: string) {
     return JSON.parse(jsonBuffer.toString('utf8'));
 }
 
-export function getMigrationsJsonPath(host: Tree, project: ProjectDefinition) {
-    const packageJsonPath = path.join(project.root, 'package.json');
+export function getMigrationsJsonPath(host: Tree, parsedPath: Location) {
+    const packageJsonPath = findPackageJson(host, parsedPath);
     const packageJson = readJson(host, packageJsonPath);
-    return path.join(project.root, packageJson['ng-update'].migrations);
+    return path.join(removeLastSegmentOfPath(packageJsonPath), packageJson['ng-update'].migrations);
 }
 
-export function getCollectionJsonPath(host: Tree, project: ProjectDefinition) {
-    const packageJsonPath = path.join(project.root, 'package.json');
+export function getCollectionJsonPath(host: Tree, parsedPath: Location) {
+    const packageJsonPath = findPackageJson(host, parsedPath);
     const packageJson = readJson(host, packageJsonPath);
-    return path.join(project.root, packageJson.schematics);
+    return path.join(removeLastSegmentOfPath(packageJsonPath), packageJson.schematics);
 }
 
 export async function getProject(workspace: WorkspaceDefinition, projectName: string) {
@@ -37,4 +47,8 @@ export async function getProject(workspace: WorkspaceDefinition, projectName: st
     } else {
         throw new SchematicsException(`A project with the name '${projectName}' does not exists`);
     }
+}
+
+export function removeLastSegmentOfPath(path: string) {
+    return path.substring(0, path.lastIndexOf('/'));
 }

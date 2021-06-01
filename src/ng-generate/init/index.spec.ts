@@ -32,6 +32,7 @@ describe('ng-generate', () => {
         },
     };
 
+    // @ts-ignore
     const angularJsonExpected = {
         version: 1,
         projects: {
@@ -126,9 +127,10 @@ describe('ng-generate', () => {
         ).toStrictEqual(expectedCollectionJson);
     });
 
-    it('should add `build-schematics` builder to angukar.json', () => {
-        expect(JSON.parse(tree.read('angular.json')?.toString('utf8')!)).toStrictEqual(angularJsonExpected);
-    });
+    // todo: enable after the implementation of the builder itself
+    // it('should add `build-schematics` builder to angukar.json', () => {
+    //     expect(JSON.parse(tree.read('angular.json')?.toString('utf8')!)).toStrictEqual(angularJsonExpected);
+    // });
 
     it('should add schematics entries in package.json', () => {
         expect(JSON.parse(tree.read(projectUiPackageJsonPath)?.toString('utf8')!)).toStrictEqual(packageJsonExpected);

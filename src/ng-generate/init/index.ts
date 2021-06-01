@@ -16,14 +16,14 @@ export function initSchematicsProject(options: InitSchematicsProjectOptions) {
         const relativePathToNodeModules = path.relative(schematicsDir, path.join(process.cwd(), 'node_modules'));
 
         return chain([
-            createSchematicsFiles(host, schematicsDir, relativePathToNodeModules),
-            addBuilderToAngularJson(workspace, options.project),
+            createSchematicsConfigurationFiles(host, schematicsDir, relativePathToNodeModules),
+            // addBuilderToAngularJson(workspace, options.project),
             addSchematicsFieldsToPackageJson(host, project.root),
         ]);
     };
 }
 
-function createSchematicsFiles(host: Tree, targetDir: string, nodeModulesPath: string) {
+function createSchematicsConfigurationFiles(host: Tree, targetDir: string, nodeModulesPath: string) {
     const schemaPath = path
         .join(nodeModulesPath, '@angular-devkit/schematics/collection-schema.json')
         .replace(/\\/g, '/');
@@ -54,6 +54,8 @@ function createSchematicsFiles(host: Tree, targetDir: string, nodeModulesPath: s
     return noop();
 }
 
+// todo: builder not yet implemented
+// @ts-ignore
 function addBuilderToAngularJson(workspace: WorkspaceDefinition, projectName: string) {
     workspace.projects.get(projectName)?.targets.set('build-schematics', {
         builder: 'ngx-cli-toolkit:build-schematics',
