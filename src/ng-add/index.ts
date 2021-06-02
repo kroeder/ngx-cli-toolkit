@@ -24,17 +24,23 @@ const getCurrentInstalledAngularVersion = (host: Tree) => {
 
 const addDependencies = (host: Tree) => {
     const angularVersion = getCurrentInstalledAngularVersion(host);
+
+    const getVersion = (version: string) => {
+        const versionSegments = version.split('.');
+        return `${versionSegments[0]}.${versionSegments[1]}.0`;
+    };
+
     const getDevBranchVersion = (version: string) => {
         const versionSegments = version.split('.');
         versionSegments[0] = versionSegments[0].replace('~', '').replace('^', '');
-        return `~0.${versionSegments[0]}0${versionSegments[1]}.${versionSegments[2]}`;
+        return `~0.${versionSegments[0]}0${versionSegments[1]}.0`;
     };
 
     const devDependencies: { [key: string]: string } = {
         '@angular-devkit/architect': getDevBranchVersion(angularVersion),
-        '@angular-devkit/core': angularVersion,
-        '@angular-devkit/schematics': angularVersion,
-        '@schematics/angular': angularVersion,
+        '@angular-devkit/core': getVersion(angularVersion),
+        '@angular-devkit/schematics': getVersion(angularVersion),
+        '@schematics/angular': getVersion(angularVersion),
     };
 
     for (const devDependenciesKey in devDependencies) {
