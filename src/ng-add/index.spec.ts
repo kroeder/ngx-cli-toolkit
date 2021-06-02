@@ -18,10 +18,10 @@ describe('ng-add', () => {
                 '@angular/core': '~11.2.11',
             },
             devDependencies: {
-                '@angular-devkit/architect': '~0.1102.11',
-                '@angular-devkit/core': '~11.2.11',
-                '@angular-devkit/schematics': '~11.2.11',
-                '@schematics/angular': '~11.2.11',
+                '@angular-devkit/architect': '~0.1102.0',
+                '@angular-devkit/core': '~11.2.0',
+                '@angular-devkit/schematics': '~11.2.0',
+                '@schematics/angular': '~11.2.0',
             },
         };
 
