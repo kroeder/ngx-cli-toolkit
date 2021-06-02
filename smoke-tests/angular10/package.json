@@ -1,0 +1,21 @@
+{
+  "name": "angular10",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "test": "ng test",
+    "lint": "ng lint"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/core": "~10.2.4",
+    "zone.js": "~0.10.3"
+  },
+  "devDependencies": {
+    "@angular/cli": "~10.2.3",
+    "ngx-cli-toolkit": "../../",
+    "typescript": "~4.0.2"
+  }
+}
