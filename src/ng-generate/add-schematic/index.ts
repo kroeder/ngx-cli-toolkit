@@ -15,7 +15,7 @@ import { Location } from '@schematics/angular/utility/parse-name';
 
 export interface InitSchematicsProjectOptions {
     path: string;
-    saveAs: 'dependencies' | 'devDependencies' | '';
+    save: 'dependencies' | 'devDependencies' | '';
 }
 
 export function createAddSchematic(options: InitSchematicsProjectOptions) {
@@ -46,7 +46,7 @@ function updateCollectionJson(host: Tree, parsedPath: Location, options: InitSch
         ...collectionJson,
         schematics: {
             'ng-add': {
-                save: options.saveAs,
+                save: options.save,
                 description: 'Bootstrap package',
                 factory: `${relativePathToSchematic}#ngAdd`,
             },
