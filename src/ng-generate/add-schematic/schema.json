@@ -1,6 +1,6 @@
 {
   "properties": {
-    "saveAs": {
+    "save": {
       "type": "string",
       "x-prompt": {
         "message": "Save package as",

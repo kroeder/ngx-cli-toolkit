@@ -57,7 +57,7 @@ describe('ng-generate', () => {
         tree.create('angular.json', JSON.stringify(angularJson));
         tree.create(path.join(schematicsPath, 'collection.json'), JSON.stringify(collectionJson));
         const options: InitSchematicsProjectOptions = {
-            saveAs: 'dependencies',
+            save: 'dependencies',
             path: schematicsPath as string,
         };
 
@@ -75,7 +75,7 @@ describe('ng-generate', () => {
                 'add-schematic',
                 {
                     project: 'ui',
-                    saveAs: 'dependencies',
+                    save: 'dependencies',
                     path: schematicsPath as PathLike,
                 },
                 tree
