@@ -30,6 +30,7 @@
   ],
   "exclude": [
     "src/*/files/**/*",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "smoke-tests/**/*"
   ]
 }

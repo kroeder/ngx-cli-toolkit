@@ -1,11 +1,40 @@
 name: CI
 on: push
 jobs:
-  build:
+  prepare-smoke-tests:
+    runs-on: ubuntu-latest
+    outputs:
+      dir: ${{ steps.set-dirs.outputs.dir }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: set-dirs
+        run: |
+          cd smoke-tests && echo "::set-output name=dir::$(ls -d */ | jq -R -s -c 'split("\n")[:-1]')"
+  jest:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install modules
-        run: npm ci
       - name: Run tests
-        run: npm test
+        run: |
+          npm ci
+          npm test
+  smoke-test:
+    runs-on: ubuntu-latest
+    needs: [prepare-smoke-tests] # Depends on previous job
+    strategy:
+      matrix:
+        dir: ${{fromJson(needs.prepare-smoke-tests.outputs.dir)}} # List matrix strategy from directories dynamically
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run tests
+        run: |
+          npm ci
+          npm run build
+          cd ./smoke-tests/${{matrix.dir}}
+          npm install
+          ./node_modules/.bin/ng generate ngx-cli-toolkit:ng-add
+          cd ./projects/lib1
+          ../../node_modules/.bin/ng generate ngx-cli-toolkit:init
+          ../../node_modules/.bin/ng generate ngx-cli-toolkit:add-schematic --save dependencies
+          ../../node_modules/.bin/ng generate ngx-cli-toolkit:update-schematic update1 --description foo --version 1.2.3
+          ../../node_modules/.bin/ng generate ngx-cli-toolkit:generate-schematic generate1 --description foo

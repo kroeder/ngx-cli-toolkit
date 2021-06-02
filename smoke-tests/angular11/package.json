@@ -1,0 +1,16 @@
+{
+  "name": "angular11",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/core": "~11.2.14"
+  },
+  "devDependencies": {
+    "@angular/cli": "~11.2.13",
+    "ngx-cli-toolkit": "../../",
+    "typescript": "~4.1.5"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "angular12",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/core": "~12.0.2"
+  },
+  "devDependencies": {
+    "@angular/cli": "~12.0.2",
+	"ngx-cli-toolkit": "../../",
+    "typescript": "~4.2.3"
+  }
+}
