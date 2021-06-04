@@ -7,6 +7,10 @@ bootstrapping process.
 
 **This package is in a very early stage, and most likely has bugs.**
 
+## Support
+
+This package supports all LTS versions of Angular. ([Angular support policy and schedule](https://angular.io/guide/releases#support-policy-and-schedule))
+
 ## Schematics
 
 ### Install
