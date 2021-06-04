@@ -34,6 +34,13 @@ the `ng update` and `ng generate` schematics in your project.
 ng generate ngx-cli-toolkit:init
 ```
 
+**Example for an Angular library project:**
+```shell
+ng generate library awesome-library
+cd projects/awesome-library
+ng generate ngx-cli-toolkit:init
+```
+
 ### Generating `ng-add` 
 
 This creates a schematic that allows others to add your package using `ng add`.
