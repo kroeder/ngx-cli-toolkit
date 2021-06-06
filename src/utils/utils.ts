@@ -32,12 +32,18 @@ export function readJson(host: Tree, path: string) {
 export function getMigrationsJsonPath(host: Tree, parsedPath: Location) {
     const packageJsonPath = findPackageJson(host, parsedPath);
     const packageJson = readJson(host, packageJsonPath);
+    if (!packageJson?.['ng-update']?.migrations) {
+        throw new SchematicsException(`Could not read 'ng-update.migrations' field from package.json. Try running 'ng g ngx-cli-toolkit:init'.`);
+    }
     return path.join(removeLastSegmentOfPath(packageJsonPath), packageJson['ng-update'].migrations);
 }
 
 export function getCollectionJsonPath(host: Tree, parsedPath: Location) {
     const packageJsonPath = findPackageJson(host, parsedPath);
     const packageJson = readJson(host, packageJsonPath);
+    if (!packageJson?.schematics) {
+        throw new SchematicsException(`Could not read 'schematics' field from package.json. Try running 'ng g ngx-cli-toolkit:init'.`);
+    }
     return path.join(removeLastSegmentOfPath(packageJsonPath), packageJson.schematics);
 }
 
