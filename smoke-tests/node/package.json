@@ -1,0 +1,16 @@
+{
+  "name": "node",
+  "version": "1.0.0",
+  "description": "Node example",
+  "main": "index.js",
+  "scripts": {
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "typescript": "^4.1.5"
+  },
+  "devDependencies": {
+    "@angular/cli": "^12.0.5"
+  }
+}

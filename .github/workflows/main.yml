@@ -28,3 +28,18 @@ jobs:
                   ../../node_modules/.bin/ng generate ngx-cli-toolkit:add-schematic --save dependencies
                   ../../node_modules/.bin/ng generate ngx-cli-toolkit:update-schematic update1 --description foo --version 1.2.3
                   ../../node_modules/.bin/ng generate ngx-cli-toolkit:generate-schematic generate1 --description foo
+    smoke-test-node:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: Run tests
+              run: |
+                  npm ci
+                  npm run build
+                  cd ./smoke-tests/node
+                  npm install
+                  ./node_modules/.bin/ng generate ngx-cli-toolkit:ng-add
+                  ./node_modules/.bin/ng generate ngx-cli-toolkit:init
+                  ./node_modules/.bin/ng generate ngx-cli-toolkit:add-schematic --save dependencies
+                  ./node_modules/.bin/ng generate ngx-cli-toolkit:update-schematic update1 --description foo --version 1.2.3
+                  ./node_modules/.bin/ng generate ngx-cli-toolkit:generate-schematic generate1 --description foo
