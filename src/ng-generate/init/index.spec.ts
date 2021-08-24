@@ -93,6 +93,7 @@ describe('ng-generate', () => {
 
     let tree: Tree;
     let runner: SchematicTestRunner;
+    let options: InitSchematicsProjectOptions;
     const projectUiPackageJsonPath = path.join(angularJson.projects.ui.root, 'package.json');
     const schematicsDirectoryPath = path.join(angularJson.projects.ui.root, 'schematics');
 
@@ -102,13 +103,13 @@ describe('ng-generate', () => {
         tree.create('angular.json', JSON.stringify(angularJson));
         tree.create(projectUiPackageJsonPath, JSON.stringify(packageJson));
 
-        const options: InitSchematicsProjectOptions = {
+        options = {
             path: `${angularJson.projects.ui.root}/subdirectory` as string,
         };
-        await runner.runSchematicAsync('init', options, tree).toPromise();
     });
 
-    it('should create migrations.json', () => {
+    it('should create migrations.json', async () => {
+        await runner.runSchematicAsync('init', options, tree).toPromise();
         const expectedMigrationsJson = {
             $schema: '../../../node_modules/@angular-devkit/schematics/collection-schema.json',
             schematics: {},
@@ -117,7 +118,8 @@ describe('ng-generate', () => {
         expect(JSON.parse(migrationJson)).toMatchObject(expectedMigrationsJson);
     });
 
-    it('should create collection.json', () => {
+    it('should create collection.json', async () => {
+        await runner.runSchematicAsync('init', options, tree).toPromise();
         const expectedCollectionJson = {
             $schema: '../../../node_modules/@angular-devkit/schematics/collection-schema.json',
             schematics: {},
@@ -132,7 +134,14 @@ describe('ng-generate', () => {
     //     expect(JSON.parse(tree.read('angular.json')?.toString('utf8')!)).toStrictEqual(angularJsonExpected);
     // });
 
-    it('should add schematics entries in package.json', () => {
+    it('should add schematics entries in package.json', async () => {
+        await runner.runSchematicAsync('init', options, tree).toPromise();
+        expect(JSON.parse(tree.read(projectUiPackageJsonPath)?.toString('utf8')!)).toStrictEqual(packageJsonExpected);
+    });
+
+    it('should init project with the --project flag', async () => {
+        let _options = { project: 'ui', path: '/' as string };
+        await runner.runSchematicAsync('init', _options, tree).toPromise();
         expect(JSON.parse(tree.read(projectUiPackageJsonPath)?.toString('utf8')!)).toStrictEqual(packageJsonExpected);
     });
 });

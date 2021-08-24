@@ -5,6 +5,11 @@
       "format": "path",
       "description": "",
       "visible": false
+    },
+    "project": {
+      "type": "string",
+      "description": "Name of the Angular project",
+      "minLength": 1
     }
   }
 }

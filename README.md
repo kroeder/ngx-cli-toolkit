@@ -35,10 +35,12 @@ ng generate ngx-cli-toolkit:init
 ```
 
 **Example for an Angular library project:**
+
+Inside Angular workspaces, the `--project` flag can be used to locate the root directory of a project.
+
 ```shell
 ng generate library awesome-library
-cd projects/awesome-library
-ng generate ngx-cli-toolkit:init
+ng generate ngx-cli-toolkit:init --project awesome-library
 ```
 
 ### Generating `ng-add` 

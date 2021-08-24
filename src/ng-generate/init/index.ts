@@ -1,16 +1,21 @@
 import { chain, noop, SchematicsException, Tree } from '@angular-devkit/schematics';
-import { updateWorkspace } from '@schematics/angular/utility/workspace';
+import { getWorkspace, updateWorkspace } from '@schematics/angular/utility/workspace';
 import { WorkspaceDefinition } from '@angular-devkit/core/src/workspace';
 import * as path from 'path';
-import { findPackageJson, getParsedPath, removeLastSegmentOfPath } from "../../utils/utils";
+import { findPackageJson, getParsedPath, getProject, removeLastSegmentOfPath } from "../../utils/utils";
 import { Location } from '@schematics/angular/utility/parse-name';
 
 export interface InitSchematicsProjectOptions {
     path: string;
+    project?: string;
 }
 
 export function initSchematicsProject(options: InitSchematicsProjectOptions) {
     return async (host: Tree) => {
+        if(options.project) {
+            const workspace = await getWorkspace(host);
+            options.path = (await getProject(workspace, options.project)).root;
+        }
         const parsedPath = getParsedPath(options.path, 'schematics');
         const projectRoot = removeLastSegmentOfPath(findPackageJson(host, parsedPath));
         const schematicsDir = path.join(projectRoot, parsedPath.name);
