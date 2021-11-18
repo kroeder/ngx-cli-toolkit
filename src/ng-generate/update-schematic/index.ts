@@ -1,4 +1,5 @@
-import { apply, applyTemplates, chain, mergeWith, move, noop, Tree, url } from '@angular-devkit/schematics';
+import { apply, applyTemplates, chain, mergeWith, move, noop, SchematicsException, Tree, url } from '@angular-devkit/schematics';
+import { buildDefaultPath, getWorkspace } from '@schematics/angular/utility/workspace';
 import * as path from 'path';
 import { camelize, dasherize } from '@angular-devkit/core/src/utils/strings';
 import { strings } from '@angular-devkit/core';
@@ -8,12 +9,25 @@ import { Location } from '@schematics/angular/utility/parse-name';
 export interface UpdateSchematicOptions {
     name: string;
     path: string;
+    project: string;
     description: string;
     version: string;
 }
 
 export function createUpdateSchematic(options: UpdateSchematicOptions) {
     return async (host: Tree) => {
+
+        const workspace = await getWorkspace(host);
+        const project = workspace.projects.get(options.project as string);
+
+        if (!project) {
+            throw new SchematicsException(`Project "${options.project}" does not exist.`);
+        }
+
+        if (options.path === undefined) {
+            options.path = buildDefaultPath(project);
+        }
+
         const parsedPath = getParsedPath(options.path, options.name);
 
         const generatedSchematicDir = path.join(__dirname, parsedPath.path, dasherize(options.name));
